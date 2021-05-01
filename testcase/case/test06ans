@@ -1,0 +1,7 @@
+12 34 555$
+a/bc/def$
+12XXXXXXX34XXXXXXX56789$
+Usage of ./echo42:
+  -n	-n omit trailing newline
+  -s string
+    	string (default " ")
