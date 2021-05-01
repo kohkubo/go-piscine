@@ -1,0 +1,8 @@
+ret = [0 1 2], len = 3, cap = 3$
+ret = [2 3 4 5 0 0 0], len = 7, cap = 10$
+ret = [2 3 4 5 0 0 0], len = 7, cap = 7$
+ret = [2 3 4 5], len = 4, cap = 100$
+ret = [], len = 0, cap = 0$
+ret = [], len = 0, cap = 0$
+ret = [0 0 0 0], len = 4, cap = 1434555$
+ret = [0 1 2 3 4 5 0 0 0 0 0 0 0 0 0 0 0 0 0 0], len = 20, cap = 20$
