@@ -1,86 +1,197 @@
+#!/bin/bash
+
+# ----------------------------------------------------------------------------
+# User setting
+# ----------------------------------------------------------------------------
+
+PROJECT_DIR=".."
+
+# ----------------------------------------------------------------------------
+# Script setting
+# ----------------------------------------------------------------------------
+
+EX00="${PROJECT_DIR}/ex00/hello-world.go"
+EX01="${PROJECT_DIR}/ex01/vars.go"
+EX02="${PROJECT_DIR}/ex02/isEmailAddress.go"
+EX03="${PROJECT_DIR}/ex03/createStairs.go"
+EX04="${PROJECT_DIR}/ex04/calculation.go"
+EX05="${PROJECT_DIR}/ex05/subSlice.go"
+EX06="${PROJECT_DIR}/ex06/echo42.go"
+EX04_MAIN="${PROJECT_DIR}/ex04/main04.go"
+EX05_MAIN="${PROJECT_DIR}/ex05/main05.go"
+
+# color
+RESET="\e[0m"
+GREEN="\e[32m"
+RED="\e[31m"
+BOLD="\e[1m"
+UNDERLINED="\e[4m"
+
+# ----------------------------------------------------------------------------
 # fmt check
-gofmt -d ../**/*.go
+# ----------------------------------------------------------------------------
+# gofmt -d ../**/*.go
 
-# ex00
-go run ../ex00/hello-world.go | cat -e > myout
-diff ./case/test00ans myout
-rm myout
+# ----------------------------------------------------------------------------
+# main
+# ----------------------------------------------------------------------------
 
-# ex01
-go run ../ex01/vars.go | cat -e > myout
-diff ./case/test01ans myout
-rm myout
+test_init () {
+	printf "\n[${EX_COLOR}$1${RESET}]\n"
+	gofmt -d $2
+	go build -o output $2 $3
 
-# ex02
-test_code (){
-	go run ../ex02/isEmailAddress.go $1
 }
 
-test_code > myout
-test_code test.test@gmail.com >> myout
-test_code a >> myout
-test_code descriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdes@gmail.com >> myout
-test_code descriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdess@gmail.com >> myout
-test_code descriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptodrsdess@gmail.com >> myout
-test_code descriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescripstoaaa >> myout
-test_code descriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescripstoaaada >> myout
-diff myout ./case/test02ans
-rm myout
+print_case () {
+	printf "${UNDERLINED}$@${RESET}\n"
+}
 
-# ex03
+print_result () {
+	if [ $1 -eq 0 ]; then
+		printf "${GREEN}OK${RESET}\n"
+	else
+		printf "${RED}KO${RESET}\n"
+	fi
+}
 
-go run ../ex03/createStairs.go 1 | cat -e > myout
-go run ../ex03/createStairs.go 3 | cat -e >> myout
-go run ../ex03/createStairs.go 4 | cat -e >> myout
-go run ../ex03/createStairs.go 0 | cat -e >> myout
-go run ../ex03/createStairs.go 10 | cat -e >> myout
-go run ../ex03/createStairs.go 12 | cat -e >> myout
-diff myout ./case/test03ans
-rm myout
+test_do () {
+	print_case "${@:2}"
+	./output "${@:2}" | cat -e >> actual/$1.txt
+}
 
-# ex04
+test_do2 () {
+	print_case "${@:2}"
+	./output "${@:2}" 2>> actual/$1.txt
+}
 
-cp ./main04.go ../ex04 && \
-go build ../ex04/calculation.go ../ex04/main04.go &&
-./calculation 12 4 | cat -e > myout
-./calculation a 4 | cat -e >> myout
-./calculation 4 | cat -e >> myout
-./calculation 4 3 3 | cat -e >> myout
-./calculation | cat -e >> myout
-./calculation 0 0 | cat -e >> myout
-./calculation 0 10 | cat -e >> myout
-diff myout ./case/test04ans
-rm myout calculation ../ex04/main04.go
+test_diff () {
+	diff expected/$1.txt actual/$1.txt
+	print_result $?
+}
 
-# ex05
+test_ex00 () {
+	test_init ex00 ${EX00}
+	test_do ex00
+	test_diff ex00
+}
 
-cp ./main05.go ../ex05 && \
-go build ../ex05/subSlice.go ../ex05/main05.go && ./subSlice | cat -e > myout
-diff myout ./case/test05ans
-rm myout  ../ex05/main05.go subSlice
+test_ex01 () {
+	test_init ex01 ${EX01}
+	test_do ex01
+	test_diff ex01
+}
 
-# ex06
+test_ex02 () {
+	test_init ex02 ${EX02}
 
-go build ../ex06/echo42.go
+	test_do ex02
+	test_do ex02 test.test@gmail.com
+	test_do ex02 a
+	test_do ex02 descriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdes@gmail.com
+	test_do ex02 descriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdess@gmail.com
+	test_do ex02 descriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptodrsdess@gmail.com
+	test_do ex02 descriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescripstoaaa
+	test_do ex02 descriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescriptorsdescripstoaaada
 
-./echo42 12 34 555 | cat -e > myout
-./echo42 -s / a bc def | cat -e >> myout
-./echo42 -s XXXXXXX 12 34 56789 | cat -e >> myout
-./echo42 -help 2>> myout
+	test_diff ex02
+}
 
-diff ./case/test06ans myout
+test_ex03 () {
+	test_init ex03 ${EX03}
 
-echo -n 12 34 555 | cat -e > ans
-./echo42 -n 12 34 555 | cat -e > myout
-diff ans myout
+	test_do ex03 1
+	test_do ex03 3
+	test_do ex03 4
+	test_do ex03 0
+	test_do ex03 10
+	test_do ex03 12
 
-echo | cat -e > ans
-./echo42 | cat -e > myout
-diff ans myout
+	test_diff ex03
+}
 
-echo -n | cat -e > ans
-./echo42 -n | cat -e > myout
+test_ex04 () {
+	cp ./main04.go ${PROJECT_DIR}/ex04
+	test_init ex04 ${EX04} ${EX04_MAIN}
 
-diff ans myout
+	test_do ex04 12 4
+	test_do ex04 a 4
+	test_do ex04 4
+	test_do ex04 4 3 3
+	test_do ex04
+	test_do ex04 0 0
+	test_do ex04 0 10
 
-rm myout ans echo42
+	test_diff ex04
+	rm ${EX04_MAIN}
+}
+
+test_ex05 () {
+	cp ./main05.go ${PROJECT_DIR}/ex05
+	test_init ex05 ${EX05} ${EX05_MAIN}
+
+	test_do ex05
+
+	test_diff ex05
+	rm ${EX05_MAIN}
+}
+
+test_ex06 () {
+	test_init ex06 ${EX06}
+	test_do ex06 12 34 555
+	test_do ex06 -s / a bc def
+	test_do ex06 -s XXXXXXX 12 34 56789
+	test_do2 ex06 -help
+	test_diff ex06
+
+	echo -n 12 34 555 | cat -e > ans
+	./output -n 12 34 555 | cat -e > myout
+	diff ans myout
+
+	echo | cat -e > ans
+	./output | cat -e > myout
+	diff ans myout
+
+	echo -n | cat -e > ans
+	./output -n | cat -e > myout
+	diff ans myout
+}
+
+test_main () {
+	if [ $# -eq 0 ]; then
+		test_ex00
+		test_ex01
+		test_ex02
+		test_ex03
+		test_ex04
+		test_ex05
+		test_ex06
+		return
+	fi
+	for ex in $@;
+	do
+		case $ex in
+			ex00) test_ex00
+				;;
+			ex01) test_ex01
+				;;
+			ex02) test_ex02
+				;;
+			ex03) test_ex03
+				;;
+			ex04) test_ex04
+				;;
+			ex05) test_ex05
+				;;
+			ex06) test_ex06
+				;;
+			* ) echo "Usage $0 [ex00..06]"
+				;;
+		esac
+	done
+}
+
+mkdir -p actual
+rm -f actual/*.txt ./output
+test_main $@
+rm -rf myout ans output

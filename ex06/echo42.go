@@ -9,7 +9,7 @@ func main() {
 	var (
 		s_flg = flag.String("s", " ", "string")
 		n_flg = flag.Bool("n", false, "-n omit trailing newline")
-		str string
+		str   string
 	)
 	flag.Parse()
 	if flag.NArg() != 0 {
